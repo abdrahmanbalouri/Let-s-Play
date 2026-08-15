@@ -42,7 +42,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Product>> updateProduct(
+    public ResponseEntity<ApiResponse> updateProduct(
             @PathVariable String id,
             @Valid @RequestBody ProductRequest request,
             Authentication auth) {
@@ -51,11 +51,11 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> deleteProduct(
+    public ResponseEntity<ApiResponse> deleteProduct(
             @PathVariable String id,
             Authentication auth) {
         productService.deleteProduct(id, auth.getName(), isAdmin(auth));
-        return ResponseEntity.ok(ApiResponse.<Void>success("Product deleted successfully"));
+        return ResponseEntity.ok(ApiResponse.success("Product deleted successfully"));
     }
 
     private boolean isAdmin(Authentication auth) {
