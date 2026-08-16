@@ -1,8 +1,8 @@
 package ma.zone01.letsplay.service;
 
 import ma.zone01.letsplay.dto.request.ProductRequest;
-import ma.zone01.letsplay.exception.ForbiddenException;
-import ma.zone01.letsplay.exception.ResourceNotFoundException;
+import ma.zone01.letsplay.exception.GlobalExceptionHandler.ForbiddenException;
+import ma.zone01.letsplay.exception.GlobalExceptionHandler.ResourceNotFoundException;
 import ma.zone01.letsplay.model.Product;
 import ma.zone01.letsplay.model.User;
 import ma.zone01.letsplay.repository.ProductRepository;

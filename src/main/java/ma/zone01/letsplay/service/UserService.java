@@ -2,8 +2,8 @@ package ma.zone01.letsplay.service;
 
 import ma.zone01.letsplay.dto.request.UpdateUserRequest;
 import ma.zone01.letsplay.dto.response.UserResponse;
-import ma.zone01.letsplay.exception.ConflictException;
-import ma.zone01.letsplay.exception.ResourceNotFoundException;
+import ma.zone01.letsplay.exception.GlobalExceptionHandler.ConflictException;
+import ma.zone01.letsplay.exception.GlobalExceptionHandler.ResourceNotFoundException;
 import ma.zone01.letsplay.model.User;
 import ma.zone01.letsplay.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;

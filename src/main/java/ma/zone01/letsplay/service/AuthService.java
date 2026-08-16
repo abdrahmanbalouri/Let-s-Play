@@ -3,7 +3,7 @@ package ma.zone01.letsplay.service;
 import ma.zone01.letsplay.dto.request.LoginRequest;
 import ma.zone01.letsplay.dto.request.RegisterRequest;
 import ma.zone01.letsplay.dto.response.AuthResponse;
-import ma.zone01.letsplay.exception.ConflictException;
+import ma.zone01.letsplay.exception.GlobalExceptionHandler.ConflictException;
 import ma.zone01.letsplay.model.User;
 import ma.zone01.letsplay.repository.UserRepository;
 import ma.zone01.letsplay.security.JwtUtils;
