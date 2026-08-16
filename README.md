@@ -86,8 +86,9 @@ MONGO_ROOT_PASSWORD=secret123
 MONGO_DB=letsplay
 MONGO_PORT=27017
 
-# App
-APP_PORT=8080
+# App (HTTPS)
+APP_PORT=8443
+SSL_KEYSTORE_PASSWORD=letsplay123
 
 # Default admin (auto-created on first startup)
 ADMIN_NAME=Admin
@@ -109,7 +110,41 @@ docker compose up -d
 ```
 
 - MongoDB runs on port `27017`
-- Mongo Express (GUI) runs on http://localhost:8081
+
+### Connect to MongoDB
+
+Connection string:
+
+```
+mongodb://<MONGO_ROOT_USER>:<MONGO_ROOT_PASSWORD>@localhost:27017/<MONGO_DB>?authSource=admin
+```
+
+Example with default values from `.env`:
+
+```
+mongodb://admin:secret123@localhost:27017/letsplay?authSource=admin
+```
+
+#### VS Code — MongoDB for VS Code
+
+1. Install extension **MongoDB for VS Code** from the Extensions panel
+2. Click the MongoDB icon in the sidebar
+3. Click **Add Connection** → **Connection String**
+4. Paste the connection string above
+5. Click **Connect**
+
+#### MongoDB Compass (GUI)
+
+1. Download from [mongodb.com/compass](https://www.mongodb.com/products/compass)
+2. Open Compass
+3. Paste the connection string in the "New Connection" field
+4. Click **Connect**
+
+#### mongosh (CLI)
+
+```bash
+mongosh "mongodb://admin:secret123@localhost:27017/letsplay?authSource=admin"
+```
 
 ### 5. Run the app
 
@@ -123,7 +158,7 @@ Or with Maven directly:
 mvn spring-boot:run
 ```
 
-API starts on **http://localhost:8080**
+API starts on **https://localhost:8443** (HTTPS)
 
 On first startup, the app automatically creates the default admin from `.env`.
 
@@ -152,7 +187,7 @@ Get a token by registering or logging in.
 
 #### Register
 ```bash
-curl -X POST http://localhost:8080/api/auth/register \
+curl -X POST https://localhost:8443/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"name":"Alice","email":"alice@example.com","password":"password123"}'
 ```
@@ -170,7 +205,7 @@ Response `201`:
 
 #### Login
 ```bash
-curl -X POST http://localhost:8080/api/auth/login \
+curl -X POST https://localhost:8443/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"alice@example.com","password":"password123"}'
 ```
@@ -189,7 +224,7 @@ curl -X POST http://localhost:8080/api/auth/login \
 
 #### Create product
 ```bash
-curl -X POST http://localhost:8080/api/products \
+curl -X POST https://localhost:8443/api/products \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{"name":"PlayStation 5","description":"Sony console","price":499.99}'
@@ -208,7 +243,7 @@ Response `201`:
 
 #### Update product
 ```bash
-curl -X PUT http://localhost:8080/api/products/<id> \
+curl -X PUT https://localhost:8443/api/products/<id> \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{"name":"PS5 Digital","description":"Digital edition","price":399.99}'
@@ -216,7 +251,7 @@ curl -X PUT http://localhost:8080/api/products/<id> \
 
 #### Delete product
 ```bash
-curl -X DELETE http://localhost:8080/api/products/<id> \
+curl -X DELETE https://localhost:8443/api/products/<id> \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -232,7 +267,7 @@ curl -X DELETE http://localhost:8080/api/products/<id> \
 | DELETE | `/api/users/{id}` | Delete user    |
 
 ```bash
-curl http://localhost:8080/api/users \
+curl https://localhost:8443/api/users \
   -H "Authorization: Bearer <admin_token>"
 ```
 
@@ -279,6 +314,43 @@ All errors return JSON:
 - Role-based access control: Admin manages everything, users manage only their own products
 - Global exception handler — no raw 5xx errors leak to the client
 - CORS configured (open by default, restrict for production)
-******
+- **HTTPS** enabled with a self-signed PKCS12 keystore (`src/main/resources/keystore.p12`)
+
+### HTTPS Setup
+
+The API runs on **HTTPS** (port `8443`) by default. A self-signed certificate is bundled in `src/main/resources/keystore.p12`.
+
+To regenerate the keystore:
+
+```bash
+keytool -genkeypair \
+  -alias letsplay \
+  -keyalg RSA \
+  -keysize 2048 \
+  -storetype PKCS12 \
+  -keystore src/main/resources/keystore.p12 \
+  -validity 3650 \
+  -storepass letsplay123 \
+  -dname "CN=localhost"
+```
+
+To use your own certificate (recommended for production):
+
+1. Place your `.p12` file at `src/main/resources/keystore.p12`
+2. Set the password in `.env`:
+   ```
+   SSL_KEYSTORE_PASSWORD=your_password
+   ```
+3. Update `application.properties` if needed:
+   ```
+   server.ssl.key-store-password=${SSL_KEYSTORE_PASSWORD}
+   ```
+
+> When using a self-signed certificate, your browser or API client will show a security warning. To bypass it:
+>
+> - **Chrome/Edge**: Click "Advanced" → "Proceed to localhost (unsafe)"
+> - **Firefox**: Click "Advanced" → "Accept the Risk and Continue"
+> - **curl**: Add `-k` flag: `curl -k https://localhost:8443/api/products`
+> - **Postman**: Go to Settings → turn off "SSL certificate verification"
+
 /home/abalouri/.local/share/docker/volumes/let-s-play_mongo_data/_data/
-******

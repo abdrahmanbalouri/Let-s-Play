@@ -7,6 +7,7 @@ import ma.zone01.letsplay.model.Product;
 import ma.zone01.letsplay.model.User;
 import ma.zone01.letsplay.repository.ProductRepository;
 import ma.zone01.letsplay.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
 
+    @Autowired
     public ProductService(ProductRepository productRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;

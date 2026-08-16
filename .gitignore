@@ -1,6 +1,10 @@
 # Environment
 .env
 
+# SSL Keystore
+*.p12
+keystore.p12
+
 # Maven
 target/
 *.class

@@ -6,6 +6,8 @@ import ma.zone01.letsplay.exception.GlobalExceptionHandler.ConflictException;
 import ma.zone01.letsplay.exception.GlobalExceptionHandler.ResourceNotFoundException;
 import ma.zone01.letsplay.model.User;
 import ma.zone01.letsplay.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -19,6 +21,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -31,6 +34,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @PostAuthorize("returnObject.email == authentication.name or hasRole('ADMIN')")
     public UserResponse getUserById(String id) {
         return UserResponse.from(findUserById(id));
     }

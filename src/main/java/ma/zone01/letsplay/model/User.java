@@ -2,6 +2,7 @@ package ma.zone01.letsplay.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Field;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,17 +10,22 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 
     @Id
+    @Field("id")
     private String id;
 
+    @Field("name")
     private String name;
 
     @Indexed(unique = true)
+    @Field("email")
     private String email;
 
     @JsonIgnore
+    @Field("password")
     private String password;
 
     /** "ROLE_USER" or "ROLE_ADMIN" */
+    @Field("role")
     private String role;
 
     public User() {}

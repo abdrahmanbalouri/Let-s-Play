@@ -3,6 +3,7 @@ package ma.zone01.letsplay.config;
 import ma.zone01.letsplay.security.JwtAuthEntryPoint;
 import ma.zone01.letsplay.security.JwtAuthFilter;
 import ma.zone01.letsplay.service.UserDetailsServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -33,6 +34,7 @@ public class SecurityConfig {
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsServiceImpl userDetailsService;
 
+    @Autowired
     public SecurityConfig(JwtAuthEntryPoint jwtAuthEntryPoint,
                           JwtAuthFilter jwtAuthFilter,
                           UserDetailsServiceImpl userDetailsService) {

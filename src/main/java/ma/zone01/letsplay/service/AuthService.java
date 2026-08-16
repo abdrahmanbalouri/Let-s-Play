@@ -7,6 +7,7 @@ import ma.zone01.letsplay.exception.GlobalExceptionHandler.ConflictException;
 import ma.zone01.letsplay.model.User;
 import ma.zone01.letsplay.repository.UserRepository;
 import ma.zone01.letsplay.security.JwtUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -25,6 +26,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
 
+    @Autowired
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        AuthenticationManager authenticationManager,
