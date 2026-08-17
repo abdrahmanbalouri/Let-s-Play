@@ -1,5 +1,6 @@
 package ma.zone01.letsplay.controller;
 
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import ma.zone01.letsplay.dto.request.LoginRequest;
 import ma.zone01.letsplay.dto.request.RegisterRequest;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@PermitAll
 @RequestMapping("/api/auth")
 public class AuthController {
 
