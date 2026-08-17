@@ -34,11 +34,12 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    @PostAuthorize("returnObject.email == authentication.name or hasRole('ADMIN')")
+    @PostAuthorize("hasRole('ADMIN')")
     public UserResponse getUserById(String id) {
         return UserResponse.from(findUserById(id));
     }
 
+    @PostAuthorize("hasRole('ADMIN')")
     public UserResponse updateUser(String id, UpdateUserRequest request) {
         User user = findUserById(id);
 
@@ -62,7 +63,10 @@ public class UserService {
     }
 
     public void deleteUser(String id) {
-        User user = findUserById(id);
+        User user = findUserById(id); 
+        if ("ROLE_ADMIN".equals(user.getRole())) {
+            throw new ConflictException("Admin cannot delete himself");
+        }
         userRepository.delete(user);
     }
 

@@ -65,6 +65,7 @@ public class ProductService {
     }
 
     private void checkOwnership(Product product, String userEmail, boolean isAdmin) {
+        System.out.println("Checking ownership for user: " + userEmail + ", isAdmin: " + isAdmin); // Debugging line
         if (isAdmin) return;
 
         User user = userRepository.findByEmail(userEmail)
@@ -73,9 +74,11 @@ public class ProductService {
         if (!product.getUserId().equals(user.getId())) {
             throw new ForbiddenException("You do not own this product");
         }
+
     }
 
     private Product findProductById(String id) {
+        System.out.println("Product ID: " + id); // Debugging line
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Product not found with id: " + id));
     }

@@ -18,9 +18,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class User {
 
     @Id
-    @Field("id")
     private String id;
-
     @Field("name")
     private String name;
 
@@ -32,7 +30,6 @@ public class User {
     @Field("password")
     private String password;
 
-    /** "ROLE_USER" or "ROLE_ADMIN" */
     @Field("role")
     private String role;
 }

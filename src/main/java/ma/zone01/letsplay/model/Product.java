@@ -16,9 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class Product {
 
     @Id
-    @Field("id")
     private String id;
-
     @Field("name")
     private String name;
 
@@ -28,6 +26,6 @@ public class Product {
     @Field("price")
     private Double price;
 
-    @Field("user_id")
+    @Field("userId")
     private String userId;
 }

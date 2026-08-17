@@ -10,6 +10,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -20,14 +21,14 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Method 1: Logger used to record errors and useful debugging information.
+    // Method 1:
+    // Logger used to record technical errors and debugging information.
     private static final Logger log =
             LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-
-    // Method 2: Custom exception used when a requested resource does not exist.
-    // Example: Product with the given ID was not found.
-    // Final HTTP status: 404 NOT FOUND.
+    // Method 2:
+    // Custom exception used when a requested resource does not exist.
+    // HTTP status: 404 NOT FOUND.
     public static class ResourceNotFoundException
             extends RuntimeException {
 
@@ -36,11 +37,10 @@ public class GlobalExceptionHandler {
         }
     }
 
-
-    // Method 3: Custom exception used when the request conflicts
-    // with existing data or application state.
-    // Example: an email already exists.
-    // Final HTTP status: 409 CONFLICT.
+    // Method 3:
+    // Custom exception used when the request conflicts with existing data.
+    // Example: duplicate email.
+    // HTTP status: 409 CONFLICT.
     public static class ConflictException
             extends RuntimeException {
 
@@ -49,11 +49,10 @@ public class GlobalExceptionHandler {
         }
     }
 
-
-    // Method 4: Custom exception used when a user is authenticated
-    // but is not allowed to perform a specific business operation.
-    // Example: a user tries to modify another user's product.
-    // Final HTTP status: 403 FORBIDDEN.
+    // Method 4:
+    // Custom exception used when the authenticated user
+    // is not allowed to perform a business operation.
+    // HTTP status: 403 FORBIDDEN.
     public static class ForbiddenException
             extends RuntimeException {
 
@@ -62,9 +61,10 @@ public class GlobalExceptionHandler {
         }
     }
 
-
-    // Method 5: Handles ResourceNotFoundException.
-    // Returns 404 when the requested resource does not exist.
+    // Method 5:
+    // Handles ResourceNotFoundException.
+    // Used when a resource such as a user or product does not exist.
+    // HTTP status: 404 NOT FOUND.
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse> handleNotFound(
             ResourceNotFoundException ex) {
@@ -75,9 +75,10 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-    // Method 6: Handles ConflictException.
-    // Returns 409 when the request conflicts with existing data.
+    // Method 6:
+    // Handles ConflictException.
+    // Used when the request conflicts with existing application data.
+    // HTTP status: 409 CONFLICT.
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ApiResponse> handleConflict(
             ConflictException ex) {
@@ -88,9 +89,10 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-    // Method 7: Handles the custom ForbiddenException.
-    // Returns 403 when the application business logic denies the action.
+    // Method 7:
+    // Handles the custom ForbiddenException.
+    // Used when business logic denies the operation.
+    // HTTP status: 403 FORBIDDEN.
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity<ApiResponse> handleForbidden(
             ForbiddenException ex) {
@@ -101,11 +103,11 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-    // Method 8: Handles Spring Security's AccessDeniedException.
-    // This happens when an authenticated user does not have the required authority.
-    // Example: @PreAuthorize("hasRole('ADMIN')") rejects a normal user.
-    // Final HTTP status: 403 FORBIDDEN.
+    // Method 8:
+    // Handles Spring Security AccessDeniedException.
+    // Happens when an authenticated user does not have
+    // the required role or authority.
+    // HTTP status: 403 FORBIDDEN.
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiResponse> handleAccessDenied(
             AccessDeniedException ex) {
@@ -116,10 +118,10 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-    // Method 9: Handles BadCredentialsException.
-    // Usually happens during authentication when the email or password is invalid.
-    // Final HTTP status: 401 UNAUTHORIZED.
+    // Method 9:
+    // Handles authentication failures caused by invalid credentials.
+    // Example: wrong email or password.
+    // HTTP status: 401 UNAUTHORIZED.
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ApiResponse> handleBadCredentials(
             BadCredentialsException ex) {
@@ -130,17 +132,18 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-    // Method 10: Handles validation errors produced by @Valid.
-    // Example: @NotBlank, @NotNull, @Positive, etc.
-    // Final HTTP status: 400 BAD REQUEST.
+    // Method 10:
+    // Handles validation errors produced by @Valid.
+    // Example: @NotBlank, @NotNull, @Positive.
+    // Collects errors for each invalid field.
+    // HTTP status: 400 BAD REQUEST.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse> handleValidation(
             MethodArgumentNotValidException ex) {
 
         Map<String, String> fieldErrors = new HashMap<>();
 
-        // Collect the validation error message for each invalid field.
+        // Collect each field name with its validation message.
         for (FieldError fe :
                 ex.getBindingResult().getFieldErrors()) {
 
@@ -160,10 +163,10 @@ public class GlobalExceptionHandler {
                 );
     }
 
-
-    // Method 11: Handles requests whose body cannot be read or parsed.
-    // Example: malformed JSON or an invalid JSON value/type.
-    // Final HTTP status: 400 BAD REQUEST.
+    // Method 11:
+    // Handles unreadable or malformed request bodies.
+    // Example: invalid JSON or wrong JSON data type.
+    // HTTP status: 400 BAD REQUEST.
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ApiResponse> handleUnreadable(
             HttpMessageNotReadableException ex) {
@@ -174,31 +177,30 @@ public class GlobalExceptionHandler {
         );
     }
 
-
-    // Method 12: Handles database integrity/constraint violations.
-    // Example: duplicate unique value or another database constraint failure.
-    // Final HTTP status: 409 CONFLICT.
+    // Method 12:
+    // Handles database integrity violations.
+    // Example: duplicate unique value.
+    // Technical details are logged on the server.
+    // HTTP status: 409 CONFLICT.
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponse> handleDataIntegrity(
             DataIntegrityViolationException ex) {
 
-        // Log the technical database error for developers.
         log.warn(
                 "Data integrity violation: {}",
                 ex.getMessage()
         );
 
-        // Do not expose database details to the client.
         return error(
                 HttpStatus.CONFLICT,
                 "Data integrity violation"
         );
     }
 
-
-    // Method 13: Handles invalid arguments explicitly thrown by application code.
-    // Example: throw new IllegalArgumentException("Invalid price");
-    // Final HTTP status: 400 BAD REQUEST.
+    // Method 13:
+    // Handles IllegalArgumentException thrown by application code.
+    // Example: invalid price or invalid parameter.
+    // HTTP status: 400 BAD REQUEST.
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse> handleIllegalArgument(
             IllegalArgumentException ex) {
@@ -209,31 +211,47 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // Method 14:
+    // Handles requests that use an HTTP method not supported
+    // by the requested endpoint.
+    // Example: sending PUT to an endpoint that only supports GET.
+    // HTTP status: 405 METHOD NOT ALLOWED.
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiResponse> handleMethodNotAllowed(
+            HttpRequestMethodNotSupportedException ex) {
 
-    // Method 14: Fallback handler for unexpected exceptions.
-    // Used when no more specific exception handler exists.
-    // Final HTTP status: 500 INTERNAL SERVER ERROR.
+        String method = ex.getMethod();
+
+        return error(
+                HttpStatus.METHOD_NOT_ALLOWED,
+                "Method " + method + " not allowed for this endpoint"
+        );
+    }
+
+    // Method 15:
+    // Fallback handler for unexpected exceptions.
+    // Used when no specific exception handler matches.
+    // Technical details are logged on the server.
+    // HTTP status: 500 INTERNAL SERVER ERROR.
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGeneric(
             Exception ex) {
 
-        // Keep the full technical error in the server logs.
         log.error(
                 "Unhandled exception: {}",
                 ex.getMessage(),
                 ex
         );
 
-        // Return a generic message to the client.
         return error(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexpected error occurred"
         );
     }
 
-
-    // Method 15: Common helper used by the other handlers.
-    // Builds a consistent HTTP response with the given status and message.
+    // Method 16:
+    // Common helper method used by all exception handlers.
+    // Builds a consistent API response with the given status and message.
     private ResponseEntity<ApiResponse> error(
             HttpStatus status,
             String message) {

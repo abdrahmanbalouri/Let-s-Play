@@ -9,7 +9,6 @@ import ma.zone01.letsplay.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +33,6 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    @PermitAll
     public ResponseEntity<Product> getProductById(@PathVariable String id) {
         return ResponseEntity.ok(productService.getProductById(id));
     }
