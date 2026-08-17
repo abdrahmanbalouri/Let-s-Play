@@ -40,7 +40,6 @@ public class ProductController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<Product> createProduct(
             @Valid @RequestBody ProductRequest request,
             Authentication auth) {
@@ -59,7 +58,6 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse> deleteProduct(
             @PathVariable String id,
             Authentication auth) {
