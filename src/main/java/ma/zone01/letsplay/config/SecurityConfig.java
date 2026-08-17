@@ -88,16 +88,26 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setAllowCredentials(true);
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", config);
-        return source;
-    }
+    // Allow requests from any origin pattern (wildcard '*' means all domains)
+    config.setAllowedOriginPatterns(List.of("*"));
+
+    // Specify the HTTP methods allowed for cross-origin requests (including OPTIONS for preflight)
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+    // Allow all headers sent by the client (e.g., Authorization, Content-Type)
+    config.setAllowedHeaders(List.of("*"));
+
+    // Allow credentials like cookies and Authorization headers to be included in requests
+    config.setAllowCredentials(true);
+
+    // Map the above CORS rules to all application endpoints ("/**")
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", config);
+
+    return source;
+}
 }
