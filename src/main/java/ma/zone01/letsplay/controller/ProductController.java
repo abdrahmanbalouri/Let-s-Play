@@ -48,7 +48,6 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public ResponseEntity<ApiResponse> updateProduct(
             @PathVariable String id,
             @Valid @RequestBody ProductRequest request,
